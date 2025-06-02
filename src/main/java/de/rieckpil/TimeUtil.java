@@ -1,6 +1,7 @@
 package de.rieckpil;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 import org.springframework.stereotype.Component;
 
@@ -20,15 +21,30 @@ public class TimeUtil {
   }
 
   public String getDiffBetweenCreationDate(LocalDate creationDate) {
+
     LocalDate currentDate = timeProvider.getCurrentDate();
-    if (creationDate.isAfter(currentDate)) {
-      throw new IllegalArgumentException("Date in the future is not valid");
+
+    Period periodBetween = Period.between(creationDate, currentDate);
+
+    if (periodBetween.isNegative()) {
+      throw new IllegalArgumentException("Creation date must not be in the future");
     }
 
-    if (creationDate.equals(timeProvider.getCurrentDate())) {
+    if (periodBetween.getYears() > 0) {
+      return "more than a year ago";
+    } else if (periodBetween.getMonths() > 0) {
+      return formatTimeAgo(periodBetween.getMonths(), "month");
+    } else if (periodBetween.getDays() > 0) {
+      return formatTimeAgo(periodBetween.getDays(), "day");
+    } else {
       return "today";
     }
+  }
 
-    return null;
+  private String formatTimeAgo(int amount, String unit) {
+    if (amount == 1) {
+      return "one " + unit + " ago";
+    }
+    return amount + " " + unit + "s ago";
   }
 }

@@ -50,4 +50,16 @@ class TimeUtilTests {
     // then
     assertEquals("today", cut.getDiffBetweenCreationDate(creationDate));
   }
+
+  @Test
+  void shouldReturnMoreThanAYearWhenCompletionDateIsOlderThan365Days() {
+    // given
+    LocalDate creationDate = LocalDate.of(2020, 12, 6);
+
+    // when
+    when(timeProvider.getCurrentDate()).thenReturn(LocalDate.now());
+
+    // then
+    assertEquals("more than a year ago", cut.getDiffBetweenCreationDate(creationDate));
+  }
 }
